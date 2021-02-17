@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # %% [markdown]
 # # Compare .FIT-file power data
 # Use this tool to compare power data from different sources.
