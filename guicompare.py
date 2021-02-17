@@ -1,9 +1,11 @@
+#!/usr/bin/env python
+
 # %% [markdown]
 # # Compare .FIT-file power data
 # Use this tool to compare power data from different sources.
 # 
-# The .fit-file parser and its connected functions are made by Aart Goossens 
-# and published under a MIT license at
+# The .fit-file parser and its connected functions are made by Aart
+# Goossens and published under a MIT license at
 # https://github.com/GoldenCheetah/sweatpy
 
 import PySimpleGUI as sg
@@ -25,13 +27,15 @@ from matplotlib.dates import date2num, num2date, DateFormatter
 ################################
 # The following functions are made by Aart Goossens. MIT license. ↓
 ################################
-def resample_data(data, resample: bool, interpolate: bool) -> pd.DataFrame:
-    """Function to calculate the mean max power for all available activities.
+def resample_data(data, resample: bool,
+         interpolate: bool) -> pd.DataFrame:
+    """Function to calculate the mean max power for all available 
+            activities.
     Args:
-        data: The data frame that needs to be resampled and/or interpolated
-        resample: whether or not the data frame needs to be resampled to 1Hz
-        interpolate: whether or not missing data in the data frame needs to 
-                     be interpolated
+            data: The data frame that needs to be resampled and/or
+            interpolated resample: whether or not the data frame needs
+            to be resampled to 1Hz interpolate: whether or not missing
+            data in the data frame needs to be interpolated
     Returns:
         Returns the resampled and interpolated dataframe
     """
@@ -46,9 +50,11 @@ def resample_data(data, resample: bool, interpolate: bool) -> pd.DataFrame:
 def remove_duplicate_indices(data: pd.DataFrame, keep="first") -> pd.DataFrame:
     """Function that removes duplicate indices
     Args:
-        data: The data frame for which duplicate indices need to be deleted
-        keep: Determines which duplicates (if any) to mark. 
-        See pandas.DataFrame.index.duplicated documentation for more information
+        data:   The data frame for which duplicate indices need to be 
+                deleted
+        keep:   Determines which duplicates (if any) to mark. See
+                pandas.DataFrame.index.duplicated documentation for 
+                more information
     Returns:
         Returns the data frame with duplicate indices removed
     """
@@ -61,16 +67,17 @@ def semicircles_to_degrees(semicircles):
 def read_fit(fpath, resample: bool = False, 
             interpolate: bool = False) -> pd.DataFrame:
     """
-    This method uses the Python fitparse library to load a FIT file into a
-    Pandas DataFrame. It is tested with a Garmin FIT file but will probably work
-    with other FIT files too. Columns names are translated to sweat terminology
-    (e.g. "heart_rate" > "heartrate").
+    This method uses the Python fitparse library to load a FIT file into
+    a Pandas DataFrame. It is tested with a Garmin FIT file but will
+    probably work with other FIT files too. Columns names are translated
+    to sweat terminology (e.g. "heart_rate" > "heartrate").
 
     Args: 
-        fpath: str, file-like or Path object 
-        resample: whether or not the data frame needs to be resampled to 1Hz 
-        interpolate: whether or not missing data in the data frame needs 
-                     to be interpolated 
+        fpath:          str, file-like or Path object 
+        resample:       whether or not the data frame needs to be 
+                        resampled to 1Hz 
+        interpolate:    whether or not missing data in the data frame 
+                        needs to be interpolated 
         Returns: A pandas dataframe with all the data.
     """
 
@@ -95,8 +102,8 @@ def read_fit(fpath, resample: bool = False,
             lap += 1
         elif record.mesg_type.name == "event":
             if record.get_value("event_type") == "start":
-                # This happens whens an activity is (manually or automatically)
-                # paused or stopped and the resumed
+                # This happens whens an activity is (manually or 
+                # automatically) paused or stopped and the resumed
                 session += 1
         elif record.mesg_type.name == "sport":
             # @TODO handle this to be able to return metadata
@@ -267,10 +274,12 @@ def xml_find_value_or_none(element, match, namespaces=None):
 
 def read_tcx(fpath, resample: bool = False,
          interpolate: bool = False) -> pd.DataFrame:
-    """This method loads a TCX file into a Pandas DataFrame. Columns names are
-    translated to sweat terminology (e.g. "heart_rate" > "heartrate").
+    """
+    This method loads a TCX file into a Pandas DataFrame. Columns names 
+    are translated to sweat terminology 
+    (e.g. "heart_rate" > "heartrate").
     Args:
->
+
     Returns:
         A pandas data frame with all the data.
     """
@@ -320,11 +329,14 @@ def read_tcx(fpath, resample: bool = False,
                 #heartrate = xml_find_value_or_none(hr, "default:Value", NAMESPACES)
                 #heartrate = xml_find_value_or_none("default:HeartRateBpm", "default:Value", NAMESPACES)
 
-                extensions = trackpoint.find("default:Extensions", NAMESPACES)
+                extensions = trackpoint.find("default:Extensions",
+                                                             NAMESPACES)
                 if extensions:
                     tpx = extensions.find("ns3:TPX", NAMESPACES)
-                    speed = xml_find_value_or_none(tpx, "ns3:Speed", NAMESPACES)
-                    power = xml_find_value_or_none(tpx, "ns3:Watts", NAMESPACES)
+                    speed = xml_find_value_or_none(tpx, "ns3:Speed", 
+                                                    NAMESPACES)
+                    power = xml_find_value_or_none(tpx, "ns3:Watts", 
+                                                    NAMESPACES)
                 else:
                     speed = None
                     power = None
@@ -519,7 +531,8 @@ while True:
                     keystring = "__" + file.name + "__OFFSET__"
                     offset = int(values[keystring])
                     newfile = file.df[plot_name].fillna(0)
-                    newfile.index = newfile.index + pd.Timedelta(seconds=offset)
+                    newfile.index = newfile.index + pd.Timedelta(
+                                                        seconds=offset)
                     data = newfile.loc[:]
 
                     ################################
@@ -569,7 +582,8 @@ while True:
                 ax[ax_number].set_ylabel(metrics[ax_number])
                 ax[ax_number].grid()
 
-                ax[ax_number].callbacks.connect('xlim_changed', on_xlims_change)
+                ax[ax_number].callbacks.connect('xlim_changed',
+                                                 on_xlims_change)
                 ax_number = ax_number + 1
 
             draw_figure_w_toolbar(window['fig_cv'].TKCanvas, fig, 
